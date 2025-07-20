@@ -8,6 +8,9 @@
 .DS_Store
 # Windows-spezifisch (falls Team)
 Thumbs.db
+# CocoaPods
+ios/Podfile.lock
+macos/Podfile.lock
 
 .atom/
 .build/

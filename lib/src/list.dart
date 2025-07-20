@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 
 import 'spieleapp.dart';
 
-class MyList extends StatelessWidget {
-  const MyList({super.key});
+class ItemList extends StatelessWidget {
+  const ItemList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -125,9 +125,7 @@ class ItemWidget extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ItemPage(
-                        item: Item.hotPotato(),
-                      )),
+                  builder: (_) => ItemPage(futureItem: Item.hotPotato())),
             );
           }),
     );

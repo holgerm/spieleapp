@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     ]);
     return MaterialApp(
       title: S.appTitle,
-      home: const MyList(),
+      home: const ItemList(),
       theme: ThemeData(
         fontFamily: 'Roboto',
         primarySwatch:

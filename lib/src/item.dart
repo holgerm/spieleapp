@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'spieleapp.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Item {
   final String name;
@@ -64,44 +66,45 @@ class Item {
 
   static get iconMap => {
         // categories:
-        'slsspiele.ballspiel': CustomIcons.spieltyp_ballspiel,
-        'slsspiele.geschicklichkeit':
-            CustomIcons.spieltyp_geschicklichkeitsspiel,
+        'ballspiel': CustomIcons.spieltyp_ballspiel,
+        'geschicklichkeit': CustomIcons.spieltyp_geschicklichkeitsspiel,
         // numberOfPlayers:
-        'slsspiele.grossegruppe': CustomIcons.anzahl_grossegruppe,
+        'grossegruppe': CustomIcons.anzahl_grossegruppe,
         // durationOfGame:
-        'slsspiele.mittellang': CustomIcons.dauer_mittel,
+        'mittellang': CustomIcons.dauer_mittel,
         // weather:
-        'slsspiele.sonne': CustomIcons.wetter_sonne,
+        'sonne': CustomIcons.wetter_sonne,
         // locations:
-        'slsspiele.drinnen': CustomIcons.ort_drinnen,
-        'slsspiele.draußen': CustomIcons.ort_draussen,
+        'drinnen': CustomIcons.ort_drinnen,
+        'draußen': CustomIcons.ort_draussen,
       };
 
-  static Item hotPotato() {
-    Item game = Item(name: "Die heiße Kartoffel", id: "#1");
-    game.image =
-        'https://holgerm.github.io/spieleapp_content/items/0/media/kartoffel.jpeg';
-    game.categories = const [
-      'slsspiele.ballspiel',
-      'slsspiele.geschicklichkeit',
-      'slsspiele.bewegungsspiel'
-    ];
-    game.numberOfPlayers = const ['slsspiele.grossegruppe'];
-    game.durationOfGame = const ['slsspiele.mittellang'];
-    game.weather = const ['slsspiele.sonne'];
-    game.locations = const ['slsspiele.drinnen', 'slsspiele.draußen'];
-    game.material = "Softball";
-    game.keywords = const [
-      'Teambilding',
-      'laut',
-      'Schulklassen',
-      'Klassiker',
-      'Kindergeburtstag'
-    ];
-    game.description =
-        '''Die Spielenden stellen sich in einem Kreis auf und werfen einander den Ball zu (ähnlich wie beim Volleyball-Spiel). Wenn jemand den Ball fallen lässt, dann hockt er sich in der Mitte des Kreises hin. Das Spiel geht weiter. Aus der Kreismitte wird man befreit, wenn jemand aus dem Kreis beim Abwehren des Balls einen Spieler in der Mitte trifft. Wenn es nicht gelingt, dann hockt derjenige sich auch in die Mitte.
-Die Spielenden, die in der Kreismitte sitzen, versuchen den vorbefliegenden Ball zu fangen. Wenn es gelingt den Ball zu fangen, sind alle, die in der Mitte hockt befreit. Wichtig dabei ist, dass die Spieler in der Kreismitte nicht aufstehen dürfen. Sie versuchen den Ball aus der Hocke zu fangen und dürfen nur hochspringen und sich wieder hinhocken.''';
-    return game;
+  static Future<Item> hotPotato() async {
+    const url =
+        'https://holgerm.github.io/spieleapp_content/items/0/content.json';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return Item.fromJson(data);
+    } else {
+      throw Exception('Failed to load game data');
+    }
+  }
+
+  factory Item.fromJson(Map<String, dynamic> json) {
+    return Item(
+      name: json['name'],
+      id: json['id'],
+    )
+      ..image = json['image']
+      ..categories = List<String>.from(json['categories'] ?? [])
+      ..numberOfPlayers = List<String>.from(json['numberOfPlayers'] ?? [])
+      ..durationOfGame = List<String>.from(json['durationOfGame'] ?? [])
+      ..weather = List<String>.from(json['weather'] ?? [])
+      ..locations = List<String>.from(json['locations'] ?? [])
+      ..description = json['description'] ?? ''
+      ..keywords = List<String>.from(json['keywords'] ?? [])
+      ..material = json['material'] ?? '';
   }
 }
