@@ -26,8 +26,8 @@ platform :ios do
         issuer_id: ENV["APP_STORE_ISSUER_ID"],
         key_filepath: ENV["APP_STORE_KEY_FILEPATH"],
         in_house: false
-      )
-      changelog: File.read("fastlane/CHANGELOG.txt")
+      ),
+      changelog: File.read("CHANGELOG.txt")
     )
   end
 end

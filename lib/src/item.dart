@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'spieleapp.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class Item {
   final String name;
@@ -79,20 +77,14 @@ class Item {
         'draußen': CustomIcons.ort_draussen,
       };
 
-  static Future<Item> hotPotato() async {
-    const url =
-        'https://holgerm.github.io/spieleapp_content/items/0/content.json';
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return Item.fromJson(data);
-    } else {
-      throw Exception('Failed to load game data');
-    }
+  factory Item.fromIndexJson(Map<String, dynamic> json) {
+    return Item(
+      id: json['id'],
+      name: json['name'],
+    );
   }
 
-  factory Item.fromJson(Map<String, dynamic> json) {
+  factory Item.fromFullJson(Map<String, dynamic> json) {
     return Item(
       name: json['name'],
       id: json['id'],

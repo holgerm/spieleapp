@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,6 +8,13 @@ import 'spieleapp.dart';
 
 class ItemList extends StatelessWidget {
   const ItemList({super.key});
+
+  Future<List<Item>> fetchIndex() async {
+    const url = '${S.dataUrl}/items/index.json';
+    final response = await http.get(Uri.parse(url));
+    final List data = json.decode(response.body);
+    return data.map((item) => Item.fromIndexJson(item)).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,36 +83,49 @@ class ItemList extends StatelessWidget {
             ),
           ],
         ),
-        body: LayoutBuilder(builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: createItems(),
-              ),
-            ),
-          );
-        }),
+        body: FutureBuilder<List<Item>>(
+          future: fetchIndex(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Fehler: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('Keine Spiele gefunden.'));
+            }
+
+            final items = snapshot.data!;
+            return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                return ItemWidget(game: items[index]);
+              },
+            );
+          },
+        ),
       ),
     );
   }
 
-  List<Widget> createItems() {
-    const items = 14;
-    List<Item> games = List.generate(
-        items,
-        (index) => Item(
-              name: 'Spiel Nr. $index',
-              id: 'Spiel $index',
-            ));
-    return List.generate(
-        games.length,
-        (index) => ItemWidget(
-              game: games[index],
-            ));
+  Future<List<Item>> loadItemsFromServer() async {
+    const url = '${S.dataUrl}/items/index.json';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode != 200) {
+      throw Exception('Index konnte nicht geladen werden');
+    }
+
+    final List<dynamic> indexList = json.decode(response.body);
+    return Future.wait(indexList.map((entry) async {
+      final id = entry['id'];
+      final itemUrl = '${S.dataUrl}/items/$id/content.json';
+      final itemResponse = await http.get(Uri.parse(itemUrl));
+      if (itemResponse.statusCode != 200) {
+        throw Exception('Item $id konnte nicht geladen werden');
+      }
+      final itemData = json.decode(itemResponse.body);
+      return Item.fromFullJson(itemData);
+    }));
   }
 }
 
@@ -125,9 +148,17 @@ class ItemWidget extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => ItemPage(futureItem: Item.hotPotato())),
+                  builder: (_) =>
+                      ItemPage(futureItem: loadItemDetails(game.id))),
             );
           }),
     );
+  }
+
+  Future<Item> loadItemDetails(String id) async {
+    final url = '${S.dataUrl}/items/$id/content.json';
+    final response = await http.get(Uri.parse(url));
+    final data = json.decode(response.body);
+    return Item.fromFullJson(data);
   }
 }
