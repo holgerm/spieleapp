@@ -158,7 +158,16 @@ class ItemWidget extends StatelessWidget {
   Future<Item> loadItemDetails(String id) async {
     final url = '${S.dataUrl}/items/$id/content.json';
     final response = await http.get(Uri.parse(url));
-    final data = json.decode(response.body);
-    return Item.fromFullJson(data);
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Fehler ${response.statusCode}: ${response.reasonPhrase}');
+    }
+
+    try {
+      final data = json.decode(response.body);
+      return Item.fromFullJson(data);
+    } catch (e) {
+      throw Exception('Fehler beim Parsen der Spiel-Daten');
+    }
   }
 }

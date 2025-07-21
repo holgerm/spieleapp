@@ -17,8 +17,31 @@ class ItemPage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Scaffold(
-              body: Center(child: Text('Fehler: ${snapshot.error}')));
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(title: const Text('Fehler')),
+              body: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 40),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Spiel konnte nicht geladen werden.',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      snapshot.error.toString(),
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
         } else if (!snapshot.hasData) {
           return const Scaffold(body: Center(child: Text('Keine Daten')));
         }
