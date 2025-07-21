@@ -19,7 +19,7 @@ class Item {
     required this.id,
   });
 
-  Image getImage() {
+  Image? getImage() {
     if (image != null) {
       return Image.network(
         image!,
@@ -30,7 +30,7 @@ class Item {
         },
       );
     } else {
-      return const Image(image: AssetImage('assets/images/GameDefault.jpg'));
+      return null;
     }
   }
 

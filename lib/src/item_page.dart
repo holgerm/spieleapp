@@ -55,7 +55,7 @@ class ItemPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  item.getImage(),
+                  if (item.getImage() != null) item.getImage()!,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: item.createIcons(),
