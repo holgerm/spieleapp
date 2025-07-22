@@ -39,16 +39,18 @@ class Item {
 
     void addIconsFor(List<String> subject) {
       for (var key in subject) {
-        if (iconMap.containsKey(key)) {
-          Widget iconWidget = Padding(
-            padding: const EdgeInsets.all(5),
-            child: Icon(
-              iconMap[key],
-              color: L.iconColor,
-              size: L.iconSize,
+        final icon = CustomIcons.iconMap[key];
+        if (icon != null) {
+          iconWidgets.add(
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Icon(
+                icon,
+                color: L.iconColor,
+                size: L.iconSize,
+              ),
             ),
           );
-          iconWidgets.add(iconWidget);
         }
       }
     }
@@ -61,21 +63,6 @@ class Item {
 
     return iconWidgets;
   }
-
-  static get iconMap => {
-        // categories:
-        'ballspiel': CustomIcons.spieltyp_ballspiel,
-        'geschicklichkeit': CustomIcons.spieltyp_geschicklichkeitsspiel,
-        // numberOfPlayers:
-        'grossegruppe': CustomIcons.anzahl_grossegruppe,
-        // durationOfGame:
-        'mittellang': CustomIcons.dauer_mittel,
-        // weather:
-        'sonne': CustomIcons.wetter_sonne,
-        // locations:
-        'drinnen': CustomIcons.ort_drinnen,
-        'draußen': CustomIcons.ort_draussen,
-      };
 
   factory Item.fromIndexJson(Map<String, dynamic> json) {
     return Item(

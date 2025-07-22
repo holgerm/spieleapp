@@ -23,62 +23,54 @@ class CustomIcons {
   static const _kFontFam = 'CustomIcons';
   static const String? _kFontPkg = null;
 
-  static const IconData spieltyp_sprachspiel =
-      IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_kartenspiel =
-      IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_bauspiel =
-      IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData anzahl_grossegruppe =
-      IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData dauer_mittel =
-      IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_kennenlernspiel =
-      IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_tanzspiel =
-      IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData ort_drinnen =
-      IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_naturspiel =
-      IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData ort_spezielleposition =
-      IconData(0xe80e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_mobil =
-      IconData(0xe80f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_musikspiel =
-      IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData ort_draussen =
-      IconData(0xe812, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData dauer_kurz =
-      IconData(0xe814, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_ratespiel =
-      IconData(0xe815, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData wetter_regen =
-      IconData(0xe816, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_laufspiel =
-      IconData(0xe817, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_suchspiel =
-      IconData(0xe818, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData wetter_schnee =
-      IconData(0xe81a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData wetter_sonne =
-      IconData(0xe81b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_darstellendesspiel =
-      IconData(0xe81d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData dauer_lang =
-      IconData(0xe81e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData anzahl_einzeln =
-      IconData(0xe81f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData anzahl_kleinegruppe =
-      IconData(0xe820, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_schreibundmalspiel =
-      IconData(0xe821, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_ballspiel =
-      IconData(0xe822, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_geschicklichkeitsspiel =
-      IconData(0xe823, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_wahrnehmungsspiel =
-      IconData(0xe824, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData spieltyp_kooperationsspiel =
-      IconData(0xe825, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const Map<String, IconData> iconMap = {
+    'sprachspiel':
+        IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'kartenspiel':
+        IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'bauspiel': IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'grossegruppe':
+        IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'mittellang':
+        IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'kennenlernspiel':
+        IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'tanzspiel':
+        IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'drinnen': IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'naturspiel':
+        IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'spezielleposition':
+        IconData(0xe80e, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'mobil': IconData(0xe80f, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'musikspiel':
+        IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'draussen': IconData(0xe812, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'kurz': IconData(0xe814, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'ratespiel':
+        IconData(0xe815, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'regen': IconData(0xe816, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'laufspiel':
+        IconData(0xe817, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'suchspiel':
+        IconData(0xe818, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'schnee': IconData(0xe81a, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'sonne': IconData(0xe81b, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'darstellendesspiel':
+        IconData(0xe81d, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'lang': IconData(0xe81e, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'einzeln': IconData(0xe81f, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'kleinegruppe':
+        IconData(0xe820, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'schreibundmalspiel':
+        IconData(0xe821, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'ballspiel':
+        IconData(0xe822, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'geschicklichkeit':
+        IconData(0xe823, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'wahrnehmungsspiel':
+        IconData(0xe824, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+    'kooperationsspiel':
+        IconData(0xe825, fontFamily: _kFontFam, fontPackage: _kFontPkg),
+  };
 }
