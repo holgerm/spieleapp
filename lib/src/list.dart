@@ -2,25 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'spieleapp.dart';
 import 'info_page.dart';
-
-PageRouteBuilder _slideFromLeft(Widget page) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => page,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(-1.0, 0.0);
-      const end = Offset.zero;
-      const curve = Curves.easeInOut;
-      final tween =
-          Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-      final offsetAnimation = animation.drive(tween);
-      return SlideTransition(position: offsetAnimation, child: child);
-    },
-  );
-}
 
 class ItemList extends StatefulWidget {
   const ItemList({super.key});
@@ -59,41 +43,25 @@ class _ItemListState extends State<ItemList> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(S.introTitle),
+          title: const Text(S.appTitle),
           centerTitle: true,
           leading: IconButton(
-            icon: const Icon(Icons.info),
+            icon: const Icon(Icons.filter_list),
             onPressed: () {
-              Navigator.of(context).push(
-                  _slideFromLeft(InfoPage(loadInfo: InfoPage.fetchMarkdown)));
+              // z. B. in Zukunft Filteroptionen implementieren
             },
           ),
           actions: <Widget>[
             IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () => showDialog<String>(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  title: const Text('Spiel Zurücksetzen',
-                      textAlign: TextAlign.center),
-                  content: const Text('Wirklich alles Löschen?',
-                      textAlign: TextAlign.center),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, 'Abbrechen'),
-                      child: const Text('Abbrechen'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Provider.of<StateModel>(context, listen: false).reset();
-                        Navigator.pop(context, 'Abbrechen');
-                      },
-                      child: const Text('Ja, alles Löschen!'),
-                    ),
-                  ],
-                  actionsAlignment: MainAxisAlignment.spaceEvenly,
-                ),
-              ),
+              icon: const Icon(Icons.info),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        const InfoPage(loadInfo: InfoPage.fetchMarkdown),
+                  ),
+                );
+              },
             ),
           ],
         ),

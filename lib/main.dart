@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // 👈 disables the DEBUG banner
       title: S.appTitle,
       home: const ItemList(),
       theme: ThemeData(
