@@ -5,6 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'spieleapp.dart';
+import 'info_page.dart';
+
+PageRouteBuilder _slideFromLeft(Widget page) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(-1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.easeInOut;
+
+      final tween =
+          Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      final offsetAnimation = animation.drive(tween);
+
+      return SlideTransition(position: offsetAnimation, child: child);
+    },
+  );
+}
 
 class ItemList extends StatelessWidget {
   const ItemList({super.key});
@@ -25,30 +43,9 @@ class ItemList extends StatelessWidget {
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(Icons.info),
-            onPressed: () => showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => Dialog.fullscreen(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text(
-                      S.imprint,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(height: 15),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'Schliessen',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            onPressed: () {
+              Navigator.of(context).push(_slideFromLeft(InfoPage()));
+            },
           ),
           actions: <Widget>[
             IconButton(
@@ -89,7 +86,23 @@ class ItemList extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('Fehler: ${snapshot.error}'));
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.wifi_off, size: 60, color: Colors.grey),
+                      SizedBox(height: 20),
+                      Text(
+                        'Keine Verbindung zum Server.\nSpieleliste wurde nicht geladen.\nFunktioniert deine Internetverbindung?',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(child: Text('Keine Spiele gefunden.'));
             }

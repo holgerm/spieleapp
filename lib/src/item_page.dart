@@ -20,24 +20,21 @@ class ItemPage extends StatelessWidget {
           return SafeArea(
             child: Scaffold(
               appBar: AppBar(title: const Text('Fehler')),
-              body: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.error_outline,
-                        color: Colors.red, size: 40),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Spiel konnte nicht geladen werden.',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      snapshot.error.toString(),
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
+              body: const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.wifi_off, size: 60, color: Colors.grey),
+                      SizedBox(height: 20),
+                      Text(
+                        'Keine Verbindung zum Server.\nSpiel wurde nicht geladen.\nFunktioniert deine Internetverbindung?',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
