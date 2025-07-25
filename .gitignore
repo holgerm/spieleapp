@@ -78,3 +78,5 @@ android/local.properties
 *.code-workspace
 devtools_options.yaml
 
+# Grafikformate:
+*.xcf
