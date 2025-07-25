@@ -161,7 +161,6 @@ class ItemWidget extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(game.name),
-        subtitle: Text(game.id),
         trailing: const Icon(Icons.arrow_forward),
         onTap: () {
           Navigator.push(
