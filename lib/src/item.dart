@@ -20,7 +20,10 @@ class Item {
   });
 
   Image? getImage() {
-    if (image != null) {
+    if (image != null &&
+        image != '' &&
+        image != 'null' &&
+        !image!.endsWith('/null')) {
       return Image.network(
         image!,
         loadingBuilder: (context, child, loadingProgress) {
@@ -28,6 +31,8 @@ class Item {
               ? child
               : const CircularProgressIndicator();
         },
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.broken_image),
       );
     } else {
       return null;
@@ -72,11 +77,10 @@ class Item {
   }
 
   factory Item.fromFullJson(Map<String, dynamic> json) {
-    return Item(
+    final item = Item(
       name: json['name'],
       id: json['id'],
     )
-      ..image = json['image']
       ..categories = List<String>.from(json['categories'] ?? [])
       ..numberOfPlayers = List<String>.from(json['numberOfPlayers'] ?? [])
       ..durationOfGame = List<String>.from(json['durationOfGame'] ?? [])
@@ -85,5 +89,16 @@ class Item {
       ..description = json['description'] ?? ''
       ..keywords = List<String>.from(json['keywords'] ?? [])
       ..material = json['material'] ?? '';
+
+    final imageValue = json['image'];
+    if (imageValue is String &&
+        imageValue.trim().isNotEmpty &&
+        imageValue.trim().toLowerCase() != 'null') {
+      item.image =
+          "https://holgerm.github.io/spieleapp_content/items/${json['id']}/media/${imageValue}";
+    } else {
+      item.image = null;
+    }
+    return item;
   }
 }
