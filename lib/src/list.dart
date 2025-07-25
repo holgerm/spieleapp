@@ -14,24 +14,44 @@ PageRouteBuilder _slideFromLeft(Widget page) {
       const begin = Offset(-1.0, 0.0);
       const end = Offset.zero;
       const curve = Curves.easeInOut;
-
       final tween =
           Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
       final offsetAnimation = animation.drive(tween);
-
       return SlideTransition(position: offsetAnimation, child: child);
     },
   );
 }
 
-class ItemList extends StatelessWidget {
+class ItemList extends StatefulWidget {
   const ItemList({super.key});
+
+  @override
+  State<ItemList> createState() => _ItemListState();
+}
+
+class _ItemListState extends State<ItemList> {
+  late Future<List<Item>> futureItems;
+
+  @override
+  void initState() {
+    super.initState();
+    futureItems = fetchIndex();
+  }
 
   Future<List<Item>> fetchIndex() async {
     const url = '${S.dataUrl}/items/index.json';
     final response = await http.get(Uri.parse(url));
+    if (response.statusCode != 200) {
+      throw Exception('Fehler beim Laden der Spieleliste');
+    }
     final List data = json.decode(response.body);
     return data.map((item) => Item.fromIndexJson(item)).toList();
+  }
+
+  Future<void> reload() async {
+    setState(() {
+      futureItems = fetchIndex();
+    });
   }
 
   @override
@@ -44,7 +64,8 @@ class ItemList extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.info),
             onPressed: () {
-              Navigator.of(context).push(_slideFromLeft(InfoPage()));
+              Navigator.of(context).push(
+                  _slideFromLeft(InfoPage(loadInfo: InfoPage.fetchMarkdown)));
             },
           ),
           actions: <Widget>[
@@ -53,14 +74,10 @@ class ItemList extends StatelessWidget {
               onPressed: () => showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
-                  title: const Text(
-                    'Spiel Zurücksetzen',
-                    textAlign: TextAlign.center,
-                  ),
-                  content: const Text(
-                    'Wirklich alles Löschen?',
-                    textAlign: TextAlign.center,
-                  ),
+                  title: const Text('Spiel Zurücksetzen',
+                      textAlign: TextAlign.center),
+                  content: const Text('Wirklich alles Löschen?',
+                      textAlign: TextAlign.center),
                   actions: <Widget>[
                     TextButton(
                       onPressed: () => Navigator.pop(context, 'Abbrechen'),
@@ -81,26 +98,32 @@ class ItemList extends StatelessWidget {
           ],
         ),
         body: FutureBuilder<List<Item>>(
-          future: fetchIndex(),
+          future: futureItems,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.wifi_off, size: 60, color: Colors.grey),
-                      SizedBox(height: 20),
-                      Text(
-                        'Keine Verbindung zum Server.\nSpieleliste wurde nicht geladen.\nFunktioniert deine Internetverbindung?',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18),
+              return RefreshIndicator(
+                onRefresh: reload,
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.wifi_off, size: 60, color: Colors.grey),
+                          SizedBox(height: 20),
+                          Text(
+                            'Keine Verbindung zum Server.\nSpieleliste wurde nicht geladen.\nFunktioniert deine Internetverbindung?',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -108,37 +131,20 @@ class ItemList extends StatelessWidget {
             }
 
             final items = snapshot.data!;
-            return ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return ItemWidget(game: items[index]);
-              },
+            return RefreshIndicator(
+              onRefresh: reload,
+              child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return ItemWidget(game: items[index]);
+                },
+              ),
             );
           },
         ),
       ),
     );
-  }
-
-  Future<List<Item>> loadItemsFromServer() async {
-    const url = '${S.dataUrl}/items/index.json';
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode != 200) {
-      throw Exception('Index konnte nicht geladen werden');
-    }
-
-    final List<dynamic> indexList = json.decode(response.body);
-    return Future.wait(indexList.map((entry) async {
-      final id = entry['id'];
-      final itemUrl = '${S.dataUrl}/items/$id/content.json';
-      final itemResponse = await http.get(Uri.parse(itemUrl));
-      if (itemResponse.statusCode != 200) {
-        throw Exception('Item $id konnte nicht geladen werden');
-      }
-      final itemData = json.decode(itemResponse.body);
-      return Item.fromFullJson(itemData);
-    }));
   }
 }
 
@@ -154,17 +160,19 @@ class ItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-          title: Text(game.name),
-          subtitle: Text(game.id),
-          trailing: const Icon(Icons.arrow_forward),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) =>
-                      ItemPage(futureItem: loadItemDetails(game.id))),
-            );
-          }),
+        title: Text(game.name),
+        subtitle: Text(game.id),
+        trailing: const Icon(Icons.arrow_forward),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  ItemPage(loadItem: () => loadItemDetails(game.id)),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -175,12 +183,7 @@ class ItemWidget extends StatelessWidget {
       throw Exception(
           'Fehler ${response.statusCode}: ${response.reasonPhrase}');
     }
-
-    try {
-      final data = json.decode(response.body);
-      return Item.fromFullJson(data);
-    } catch (e) {
-      throw Exception('Fehler beim Parsen der Spiel-Daten');
-    }
+    final data = json.decode(response.body);
+    return Item.fromFullJson(data);
   }
 }
